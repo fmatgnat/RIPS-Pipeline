@@ -38,7 +38,8 @@ pro RIPS_Mercury_Perkins_v02, PART=part, NIGHT=night
 ;           26 Oct 2018 - re-worked for native IDL where simple 
 ;                         changed slit interpolation method used when finding the centroid in the imaging channel
 Print,      'TBD: - Fix slit width written into the spectral image, use a weighted average scheme'   
-Print,      'TBD: - Fix hack incase integration times change between the fits files we''re co-adding here'
+Print,      'TBD: - Fix hack in case integration times change between the fits files we''re co-adding here'
+Print,      'TBD: - Ground truth requires an off-band image assembled from off-line spectral slices that matches the imaging channel---Demonstrate this in Part 4 '
               
 ;                                         
 ; *********************************************************************************************************************
@@ -64,10 +65,16 @@ SetDefaultValue, do_smooth, 1                                             ; set 
 SetDefaultValue, smooth_width, 6                                          ; width of smoothing kernel if do_smooth = 1
 SetDefaultValue, stddev_cutoff, 1.                                        ; only use Mercury frames with stddev > [stddev_cutoff]_sigma, these are defined as "good" 
 
-mercury_dir   = 'D:\DATA\RIPS\Perkins RIPS - March 2018\15\renamed\'                ; directory with Mercury FITS file(s)
-dark_dir      = 'D:\DATA\RIPS\Perkins RIPS - March 2018\14\Carl_Keep\'              ; directory with dark file
-flat_dir      = 'D:\DATA\RIPS\Perkins RIPS - March 2018\15\'                        ; directory with flat file
-sky_dir       = 'D:\DATA\RIPS\Perkins RIPS - March 2018\15\'                        ; directory with sky file
+  ; Choose which drive we're pulling data from:
+    Local = FILE_SEARCH('D:\DATA\RIPS\Perkins RIPS - March 2018\*') ;Carl
+    Cloud = FILE_SEARCH('Y:\obs_18\Perkins_RIPS_March\*')           ;Luke
+    if local[0] ne '' then base_dir = 'D:\DATA\RIPS\Perkins RIPS - March 2018\'
+    if Cloud[0] ne '' then base_dir = 'Y:\obs_18\Perkins_RIPS_March\'
+
+mercury_dir   = base_dir+'15\renamed\'                ; directory with Mercury FITS file(s)
+dark_dir      = base_dir+'14\Carl_Keep\'              ; directory with dark file
+flat_dir      = base_dir+'15\'                        ; directory with flat file
+sky_dir       = base_dir+'15\'                        ; directory with sky file
 Mercury_file  = 'Mercury_Na_' + strtrim(['791','792','793','794','798','800','803']) + '.fits'  ; Mercury kinetic series to use (note that these have been renamed from the "RIPS1_..." defaults)
 ;Mercury_file  = 'Mercury_Na_' + strtrim(['800']) + '.fits'  ; Mercury kinetic series to use (note that these have been renamed from the "RIPS1_..." defaults)
 ;Mercury_file  = 'Mercury_Na_803.fits' ; TEMP for faster testing
@@ -488,7 +495,7 @@ if part eq 4 or part eq 99 then begin
 ;   window, 2, xs = s[0], ys = s[1], xpos=winpos_x[2], ypos=winpos_y[2]+s[1]+35
    window, 2, xs = xs_img*movie_scale, ys = ys_img*movie_scale, xpos=winpos_x+s[0]+20, ypos=winpos_y+ys_img*movie_scale+40
    window, 3, xs = s[0], ys = 2*s[1], xpos=winpos_x, ypos=winpos_y+2*s[1]+40
-;stop
+
    ; Some video related variables
    mpgFilename = outdir + 'Mercury Na image.mp4'
    mpgFilename2 = outdir + 'Mercury disk.mp4'
