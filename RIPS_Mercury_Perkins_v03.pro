@@ -1,5 +1,5 @@
 pro RIPS_Mercury_Perkins_v03, PART=part, NIGHT=night
-
+; new change made on the fmatgnat/RIPS-Pipeline, forked from CarlSchmidt/RIPS-Pipeline
 ; **********************************************************************************************************************
 ; **********************************************************************************************************************
 ; Routine to extract Na emission from spectral scans over Mercury's disk with Perkins/RIPS in order to create a 2-D
